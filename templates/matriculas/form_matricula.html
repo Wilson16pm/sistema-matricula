@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo }} - Sistema de Matrícula{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-dark" style="background-color: #1e3c72;">
+    <div class="container-fluid">
+        <a href="{% url 'dashboard' %}" class="navbar-brand mb-0 h1 text-decoration-none text-white">
+            <i class="bi bi-mortarboard-fill"></i> Sistema de Matrícula
+        </a>
+        <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="mb-4">
+        <h2><i class="bi bi-journal-plus"></i> {{ titulo }}</h2>
+        <p class="text-muted">Seleccione el estudiante y apoderado para generar la matrícula.</p>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Estudiante *</label>
+                        {{ form.estudiante }}
+                        {% if form.estudiante.errors %}<div class="text-danger small">{{ form.estudiante.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Apoderado *</label>
+                        {{ form.apoderado }}
+                        {% if form.apoderado.errors %}<div class="text-danger small">{{ form.apoderado.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Año Académico *</label>
+                        {{ form.anio }}
+                        {% if form.anio.errors %}<div class="text-danger small">{{ form.anio.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Grado Solicitado *</label>
+                        {{ form.grado_solicitado }}
+                        {% if form.grado_solicitado.errors %}<div class="text-danger small">{{ form.grado_solicitado.errors }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Observaciones</label>
+                        {{ form.observaciones }}
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'lista_matriculas' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Generar Matrícula
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

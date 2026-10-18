@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Matrícula - Sistema de Matrícula{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-dark" style="background-color: #1e3c72;">
+    <div class="container-fluid">
+        <a href="{% url 'dashboard' %}" class="navbar-brand mb-0 h1 text-decoration-none text-white">
+            <i class="bi bi-mortarboard-fill"></i> Sistema de Matrícula
+        </a>
+        <div class="d-flex align-items-center text-white">
+            <span class="me-3"><i class="bi bi-person-circle"></i> {{ request.user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="mb-4">
+        <h2><i class="bi bi-journal-check"></i> Mi Matrícula</h2>
+        <p class="text-muted">Estado de la matrícula de su hijo(a).</p>
+    </div>
+
+    {% if matriculas %}
+        {% for mat in matriculas %}
+        <div class="card shadow-sm border-0 mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Estudiante: {{ mat.estudiante.nombre_completo }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Código: {{ mat.codigo }}</h6>
+                <hr>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p><strong>Año:</strong> {{ mat.anio.anio }}</p>
+                        <p><strong>Grado:</strong> {{ mat.grado_solicitado.nombre }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Sección:</strong> {{ mat.seccion|default:"Por asignar" }}</p>
+                        <p><strong>Estado:</strong> 
+                            {% if mat.estado == 'Pagado' %}
+                                <span class="badge bg-info text-dark">Pagado (Esperando confirmación)</span>
+                            {% elif mat.estado == 'Matriculado' %}
+                                <span class="badge bg-success">Matriculado</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{{ mat.estado }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        {% if mat.estado == 'Matriculado' %}
+                        <a href="{% url 'descargar_ficha_pdf' mat.id %}" class="btn btn-primary mt-3" target="_blank">
+                            <i class="bi bi-file-earmark-pdf"></i> Descargar Ficha
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill"></i> No se encontraron matrículas activas para su usuario.
+        </div>
+    {% endif %}
+    
+    <a href="{% url 'dashboard' %}" class="btn btn-link mt-3"><i class="bi bi-arrow-left"></i> Volver al Dashboard</a>
+</div>
+{% endblock %}

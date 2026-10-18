@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Historial de Pagos - Sistema de Matrícula{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-dark" style="background-color: #1e3c72;">
+    <div class="container-fluid">
+        <a href="{% url 'dashboard' %}" class="navbar-brand mb-0 h1 text-decoration-none text-white">
+            <i class="bi bi-mortarboard-fill"></i> Sistema de Matrícula
+        </a>
+        <div class="d-flex align-items-center text-white">
+            <span class="me-3"><i class="bi bi-person-circle"></i> {{ request.user.username }}</span>
+            <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-cash-coin"></i> Historial de Pagos</h2>
+            <p class="text-muted mb-0">Pagos registrados por los cajeros</p>
+        </div>
+        <a href="{% url 'registrar_pago' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Registrar Pago
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            {% if pagos %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>N° Recibo</th>
+                            <th>Matrícula</th>
+                            <th>Monto</th>
+                            <th>Método</th>
+                            <th>Registrado por</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in pagos %}
+                        <tr>
+                            <td>{{ p.fecha_pago|date:"d/m/Y H:i" }}</td>
+                            <td><strong>{{ p.numero_operacion|default:"—" }}</strong></td>
+                            <td>{{ p.matricula.codigo }}</td>
+                            <td><strong>S/ {{ p.monto }}</strong></td>
+                            <td><span class="badge bg-secondary">{{ p.metodo }}</span></td>
+                            <td>{{ p.registrado_por.username|default:"Sistema" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <p class="text-muted mt-3">No hay pagos registrados todavía.</p>
+                <a href="{% url 'registrar_pago' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Registrar el primero
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mt-3">
+        <a href="{% url 'dashboard' %}" class="btn btn-link"><i class="bi bi-arrow-left"></i> Volver al Dashboard</a>
+    </div>
+</div>
+{% endblock %}

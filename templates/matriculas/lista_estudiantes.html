@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Estudiantes - Sistema de Matrícula{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-dark" style="background-color: #1e3c72;">
+    <div class="container-fluid">
+        <a href="{% url 'dashboard' %}" class="navbar-brand mb-0 h1 text-decoration-none text-white">
+            <i class="bi bi-mortarboard-fill"></i> Sistema de Matrícula
+        </a>
+        <div class="d-flex align-items-center text-white">
+            <span class="me-3">
+                <i class="bi bi-person-circle"></i> {{ request.user.username }}
+            </span>
+            <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-people-fill"></i> Estudiantes</h2>
+            <p class="text-muted mb-0">Gestión de estudiantes registrados</p>
+        </div>
+        <a href="{% url 'crear_estudiante' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo Estudiante
+        </a>
+    </div>
+
+    <!-- Mensajes -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Buscador -->
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body">
+            <form method="GET" class="row g-2">
+                <div class="col-md-10">
+                    <input type="text" name="buscar" class="form-control" 
+                           placeholder="Buscar por DNI, nombres o apellidos..." 
+                           value="{{ busqueda }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            {% if estudiantes %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>DNI</th>
+                            <th>Apellidos y Nombres</th>
+                            <th>Fecha Nac.</th>
+                            <th>Sexo</th>
+                            <th>Teléfono</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for est in estudiantes %}
+                        <tr>
+                            <td><strong>{{ est.dni }}</strong></td>
+                            <td>{{ est.apellidos }}, {{ est.nombres }}</td>
+                            <td>{{ est.fecha_nacimiento|date:"d/m/Y" }}</td>
+                            <td>{{ est.get_sexo_display }}</td>
+                            <td>{{ est.telefono|default:"—" }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'editar_estudiante' est.id %}" 
+                                   class="btn btn-sm btn-outline-warning" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'eliminar_estudiante' est.id %}" 
+                                   class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <p class="text-muted mt-3">
+                    {% if busqueda %}
+                        No se encontraron estudiantes con "{{ busqueda }}".
+                    {% else %}
+                        No hay estudiantes registrados todavía.
+                    {% endif %}
+                </p>
+                <a href="{% url 'crear_estudiante' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Registrar el primero
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Volver al dashboard -->
+    <div class="mt-3">
+        <a href="{% url 'dashboard' %}" class="btn btn-link">
+            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
